@@ -66,6 +66,8 @@ static void RectToSDLRect(const RenderBackend_Rect *rect, SDL_Rect *sdl_rect)
 		sdl_rect->h = 0;
 }
 
+unsigned int texMem = 0;
+
 RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t screen_width, size_t screen_height, bool fullscreen)
 {
 #ifdef __PS2__
@@ -200,6 +202,7 @@ RenderBackend_Surface* RenderBackend_CreateSurface(size_t width, size_t height, 
 		return NULL;
 
 	surface->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, render_target ? SDL_TEXTUREACCESS_TARGET : SDL_TEXTUREACCESS_STATIC, width, height);
+	texMem += width * height * 4;
 
 	SDL_SetTextureBlendMode(surface->texture, SDL_BLENDMODE_BLEND);
 
@@ -227,6 +230,7 @@ RenderBackend_Surface* RenderBackend_CreateSurface(size_t width, size_t height, 
 
 void RenderBackend_FreeSurface(RenderBackend_Surface *surface)
 {
+	texMem -= surface->width * surface->height * 4;
 	// Remove from linked list
 	if (surface->next != NULL)
 		surface->next->prev = surface->prev;
@@ -348,6 +352,7 @@ RenderBackend_GlyphAtlas* RenderBackend_CreateGlyphAtlas(size_t width, size_t he
 	if (atlas != NULL)
 	{
 		atlas->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, width, height);
+		texMem += width * height * 4;
 
 		if (atlas->texture != NULL)
 		{
@@ -485,4 +490,9 @@ void RenderBackend_HandleWindowResize(size_t width, size_t height)
 
 		SDL_SetTextureBlendMode(upscaled_framebuffer.texture, SDL_BLENDMODE_NONE);*/
 	}
+}
+
+unsigned int RenderBackend_GetTextureMemoryUsage(void)
+{
+	return texMem;
 }

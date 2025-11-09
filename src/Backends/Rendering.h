@@ -33,3 +33,4 @@ void RenderBackend_PrepareToDrawGlyphs(RenderBackend_GlyphAtlas *atlas, RenderBa
 void RenderBackend_DrawGlyph(long x, long y, size_t glyph_x, size_t glyph_y, size_t glyph_width, size_t glyph_height);
 void RenderBackend_HandleRenderTargetLoss(void);
 void RenderBackend_HandleWindowResize(size_t width, size_t height);
+unsigned int RenderBackend_GetTextureMemoryUsage(void);

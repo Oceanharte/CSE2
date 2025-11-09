@@ -21,6 +21,7 @@
 
 #include "WindowsWrapper.h"
 #include "Backends/Controller.h"
+#include "Backends/Rendering.h"
 
 #include "Backends/Misc.h"
 #include "Bitmap.h"
@@ -125,13 +126,13 @@ void PutOverlay(void)
 	unsigned int buttonCount;
 	short* axes;
 	unsigned int axesCount;
-	//PutNumber4(4, 32, SDL_JoystickNumHats((SDL_Joystick*)ControllerBackend_GetNativeHandle()), FALSE);
-	if (ControllerBackend_GetJoystickStatus(&buttons, &buttonCount, &axes, &axesCount)) {
+	PutNumber4(4, 32, RenderBackend_GetTextureMemoryUsage()/1000, FALSE);
+	/*if (ControllerBackend_GetJoystickStatus(&buttons, &buttonCount, &axes, &axesCount)) {
 		for (int i = 0; i < buttonCount; i++) {
 			PutNumber4(x, 32, buttons[i], FALSE);
 			x += 8;
 		}
-	}
+	}*/
 }
 
 void PutFramePerSecound(void)
