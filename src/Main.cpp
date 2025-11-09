@@ -106,17 +106,17 @@ void PutOverlay(void)
 {
 	const char* jname = SDL_JoystickNameForIndex(0);
 	const char* jname2 = SDL_JoystickName((SDL_Joystick*)ControllerBackend_GetNativeHandle());
-	if (jname != NULL) {
+	/*if (jname != NULL) {
 		PutText(8, 8, jname, 0xFFFFFF);
 	}
 	else {
 		PutText(8, 8, "<NO INPUT>", 0xFFFFFF);
-	}
+	}*/
 	if (jname2 != NULL) {
-		PutText(8, 20, jname2, 0xFFFFFF);
+		PutText(8, 8, jname2, 0xFFFFFF);
 	}
 	else {
-		PutText(8, 20, "<NO INPUT>", 0xFFFFFF);
+		PutText(8, 8, "<NO INPUT>", 0xFFFFFF);
 	}
 	//PutNumber4(8, 32, gbUseJoystick, FALSE);
 	int x = 2;
@@ -125,12 +125,13 @@ void PutOverlay(void)
 	unsigned int buttonCount;
 	short* axes;
 	unsigned int axesCount;
-	/*if (ControllerBackend_GetJoystickStatus(&buttons, &buttonCount, &axes, &axesCount)) {
+	//PutNumber4(4, 32, SDL_JoystickNumHats((SDL_Joystick*)ControllerBackend_GetNativeHandle()), FALSE);
+	if (ControllerBackend_GetJoystickStatus(&buttons, &buttonCount, &axes, &axesCount)) {
 		for (int i = 0; i < buttonCount; i++) {
 			PutNumber4(x, 32, buttons[i], FALSE);
 			x += 8;
 		}
-	}*/
+	}
 }
 
 void PutFramePerSecound(void)

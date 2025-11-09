@@ -124,13 +124,18 @@ bool ControllerBackend_GetJoystickStatus(bool **buttons, unsigned int *button_co
 		button_buffer[current_button++] = hat == SDL_HAT_LEFT || hat == SDL_HAT_LEFTUP || hat == SDL_HAT_LEFTDOWN;
 	}
 
+	bool up = button_buffer[4];
+	bool right = button_buffer[5];
+	bool down = button_buffer[6];
+	bool left = button_buffer[7];
+
 	//swap 1 and 14
+	button_buffer[4] = button_buffer[3];	//start to items
 	button_buffer[1] = button_buffer[14];	//X to jump
 	button_buffer[2] = button_buffer[15];	//square to fire
 	button_buffer[3] = button_buffer[11];	//R1 to armsfwd
 	button_buffer[6] = button_buffer[10];	//L1 to armsrev
 	button_buffer[5] = button_buffer[0];	//select to map
-	button_buffer[4] = button_buffer[4];	//start to items
 
 	*buttons = button_buffer;
 
@@ -144,14 +149,13 @@ bool ControllerBackend_GetJoystickStatus(bool **buttons, unsigned int *button_co
 
 	//0 - horizontal
 	//1 - vertical
-	Uint8 hat0 = SDL_JoystickGetHat(joystick, 0);
 	axis_buffer[0] =
-		hat0 & SDL_HAT_RIGHT ? 0x7fff
-		: hat0 & SDL_HAT_LEFT ? -0x7fff
+		right ? 0x7fff
+		: left ? -0x7fff
 		: 0;
 	axis_buffer[1] =
-		hat0 & SDL_HAT_UP ? 0x7fff
-		: hat0 & SDL_HAT_DOWN ? -0x7fff
+		down ? 0x7fff
+		: up ? -0x7fff
 		: 0;
 
 	return true;
