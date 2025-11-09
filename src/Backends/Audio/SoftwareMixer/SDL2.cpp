@@ -4,8 +4,6 @@
 #include "Backend.h"
 
 #include <mutex>
-#include <thread>
-#include <atomic>
 #include <stddef.h>
 #include <string.h>
 #include <string>
@@ -26,9 +24,9 @@ static SDL_AudioDeviceID device_id;
 
 static short* asyncOrganyaStream = NULL;
 static unsigned int organyaStreamSize = 0;
-std::atomic<bool> dataReady = false;
+bool dataReady = false;
 
-void OrganyaThread() {
+int OrganyaThread(void* data) {
 	while (true) {
 		if (parent_callback != NULL) {
 			if (!dataReady) {
@@ -109,8 +107,8 @@ unsigned long SoftwareMixerBackend_Init(void (*callback)(long *stream, size_t fr
 
 	parent_callback = callback;
 
-	std::thread organyaThread(OrganyaThread);
-	organyaThread.detach();
+	SDL_Thread* th = SDL_CreateThread(OrganyaThread, "organya", NULL);
+	SDL_DetachThread(th);
 
 	return obtained_specification.freq;
 }
