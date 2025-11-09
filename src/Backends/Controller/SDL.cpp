@@ -13,7 +13,7 @@
 
 #define DEADZONE 10000
 
-static SDL_Joystick *joystick;
+static SDL_Joystick *joystick = NULL;
 
 static Sint16 *axis_neutrals;
 
@@ -132,6 +132,11 @@ bool ControllerBackend_GetJoystickStatus(bool **buttons, unsigned int *button_co
 	*axes = axis_buffer;
 
 	return true;
+}
+
+void* ControllerBackend_GetNativeHandle()
+{
+	return (void*)joystick;
 }
 
 void ControllerBackend_JoystickConnect(Sint32 joystick_id)

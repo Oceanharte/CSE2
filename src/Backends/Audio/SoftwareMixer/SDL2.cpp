@@ -17,12 +17,18 @@ static void (*parent_callback)(long *stream, size_t frames_total);
 
 static SDL_AudioDeviceID device_id;
 
+static short lsbToMsb(short lsb) {
+	return (lsb >> 8) | (lsb << 8);
+}
+
 static void Callback(void *user_data, Uint8 *stream_uint8, int len)
 {
 	(void)user_data;
 
 	short *stream = (short*)stream_uint8;
 	const size_t frames_total = len / sizeof(short) / 2;
+
+	memset(stream, 0, len);
 
 	size_t frames_done = 0;
 
@@ -68,7 +74,7 @@ unsigned long SoftwareMixerBackend_Init(void (*callback)(long *stream, size_t fr
 	specification.freq = 48000;
 	specification.format = AUDIO_S16;
 	specification.channels = 2;
-	specification.samples = 0x400;	// Roughly 10 milliseconds for 48000Hz
+	specification.samples = 0x200;	// Roughly 10 milliseconds for 48000Hz
 	specification.callback = Callback;
 	specification.userdata = NULL;
 

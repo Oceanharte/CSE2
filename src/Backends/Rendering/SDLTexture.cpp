@@ -97,9 +97,9 @@ RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t scree
 			else
 				Backend_PrintInfo("Selected SDL render driver: %s", info.name);
 
-			framebuffer.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, screen_width, screen_height);
+			framebuffer.texture = NULL;// SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, screen_width, screen_height);
 
-			if (framebuffer.texture != NULL)
+			/*if (framebuffer.texture != NULL)
 			{
 				SDL_SetTextureBlendMode(framebuffer.texture, SDL_BLENDMODE_NONE);
 
@@ -116,7 +116,13 @@ RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t scree
 			{
 				std::string error_message = std::string("Could not create framebuffer: ") + SDL_GetError();
 				Backend_ShowMessageBox("Fatal error (SDLTexture rendering backend)", error_message.c_str());
-			}
+			}*/
+			framebuffer.width = screen_width;
+			framebuffer.height = screen_height;
+			RenderBackend_HandleWindowResize(screen_width, screen_height);
+
+			Backend_PostWindowCreation();
+			return &framebuffer;
 
 			SDL_DestroyRenderer(renderer);
 		}
@@ -143,21 +149,21 @@ void RenderBackend_Deinit(void)
 	if (upscaled_framebuffer.texture != NULL)
 		SDL_DestroyTexture(upscaled_framebuffer.texture);
 
-	SDL_DestroyTexture(framebuffer.texture);
+	//SDL_DestroyTexture(framebuffer.texture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 }
 
 void RenderBackend_DrawScreen(void)
 {
-	if (upscaled_framebuffer.texture != NULL)
+	/*if (upscaled_framebuffer.texture != NULL)
 	{
 		if (SDL_SetRenderTarget(renderer, upscaled_framebuffer.texture) < 0)
 			Backend_PrintError("Couldn't set upscaled framebuffer as the current rendering target: %s", SDL_GetError());
 
 		if (SDL_RenderCopy(renderer, framebuffer.texture, NULL, NULL) < 0)
 			Backend_PrintError("Failed to copy framebuffer texture to upscaled framebuffer: %s", SDL_GetError());
-	}
+	}*/
 
 	if (SDL_SetRenderTarget(renderer, NULL) < 0)
 		Backend_PrintError("Couldn't set default render target as the current rendering target: %s", SDL_GetError());
@@ -165,10 +171,10 @@ void RenderBackend_DrawScreen(void)
 	if (SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF) < 0)
 		Backend_PrintError("Couldn't set color for drawing operations: %s", SDL_GetError());
 
-	SDL_RenderClear(renderer);
+	//SDL_RenderClear(renderer);
 
-	if (SDL_RenderCopy(renderer, upscaled_framebuffer.texture != NULL ? upscaled_framebuffer.texture : framebuffer.texture, NULL, &window_rect) < 0)
-		Backend_PrintError("Failed to copy upscaled framebuffer texture to default render target: %s", SDL_GetError());
+	/*if (SDL_RenderCopy(renderer, upscaled_framebuffer.texture != NULL ? upscaled_framebuffer.texture : framebuffer.texture, NULL, &window_rect) < 0)
+		Backend_PrintError("Failed to copy upscaled framebuffer texture to default render target: %s", SDL_GetError());*/
 
 	SDL_RenderPresent(renderer);
 }
@@ -279,7 +285,7 @@ void RenderBackend_Blit(RenderBackend_Surface *source_surface, const RenderBacke
 	if (SDL_SetTextureBlendMode(source_surface->texture, colour_key ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE) < 0)
 		Backend_PrintError("Couldn't set texture blend mode: %s", SDL_GetError());
 
-	if (SDL_SetRenderTarget(renderer, destination_surface->texture) < 0)
+	if (SDL_SetRenderTarget(renderer, destination_surface == &framebuffer ? NULL : destination_surface->texture) < 0)
 		Backend_PrintError("Couldn't set current rendering target: %s", SDL_GetError());
 
 	if (SDL_RenderCopy(renderer, source_surface->texture, &source_rect, &destination_rect) < 0)
@@ -449,13 +455,13 @@ void RenderBackend_HandleWindowResize(size_t width, size_t height)
 
 	if (window_rect.w % framebuffer.width != 0 || window_rect.h % framebuffer.height != 0)
 	{
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+		/*SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 		upscaled_framebuffer.texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, upscaled_framebuffer.width, upscaled_framebuffer.height);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 		if (upscaled_framebuffer.texture == NULL)
 			Backend_PrintError("Couldn't regenerate upscaled framebuffer");
 
-		SDL_SetTextureBlendMode(upscaled_framebuffer.texture, SDL_BLENDMODE_NONE);
+		SDL_SetTextureBlendMode(upscaled_framebuffer.texture, SDL_BLENDMODE_NONE);*/
 	}
 }

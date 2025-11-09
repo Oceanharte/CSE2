@@ -21,6 +21,7 @@ extern int gJoystickButtonTable[8];
 
 extern BOOL gbUseJoystick;
 
+void PutOverlay(void);
 void PutFramePerSecound(void);
 
 BOOL SystemTask(void);

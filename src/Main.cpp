@@ -12,7 +12,11 @@
 #include <string.h>
 #include <string>
 
+#define SDL_MAIN_HANDLED
+#include "SDL.h"
+
 #include "WindowsWrapper.h"
+#include "Backends/Controller.h"
 
 #include "Backends/Misc.h"
 #include "Bitmap.h"
@@ -94,8 +98,29 @@ static unsigned long CountFramePerSecound(void)
 	return max_count;
 }
 
+void PutOverlay(void)
+{
+	const char* jname = SDL_JoystickNameForIndex(0);
+	const char* jname2 = SDL_JoystickName((SDL_Joystick*)ControllerBackend_GetNativeHandle());
+	if (jname != NULL) {
+		PutText(8, 8, jname, 0xFFFFFF);
+	}
+	else {
+		PutText(8, 8, "<NO INPUT>", 0xFFFFFF);
+	}
+	if (jname2 != NULL) {
+		PutText(8, 20, jname2, 0xFFFFFF);
+	}
+	else {
+		PutText(8, 20, "<NO INPUT>", 0xFFFFFF);
+	}
+
+	//PutNumber4(8, 32, gbUseJoystick, FALSE);
+}
+
 void PutFramePerSecound(void)
 {
+	PutOverlay();
 	if (bFPS)
 	{
 		const unsigned long fps = CountFramePerSecound();

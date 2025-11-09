@@ -45,7 +45,8 @@ BOOL LoadConfigData(CONFIGDATA *conf)
 	conf->display_mode = File_ReadLE32(fp);
 
 	// Read joystick configuration (if enabled, and mappings)
-	conf->bJoystick = File_ReadLE32(fp);
+	conf->bJoystick = TRUE;
+	//conf->bJoystick = File_ReadLE32(fp);
 	for (int button = 0; button < 8; button++)
 		conf->joystick_button[button] = File_ReadLE32(fp);
 
