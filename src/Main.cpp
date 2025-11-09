@@ -12,7 +12,12 @@
 #include <string.h>
 #include <string>
 
+#ifdef __PS2__
 #include <SDL2/SDL.h>
+#else
+#define SDL_MAIN_HANDLED
+#include "SDL.h"
+#endif
 
 #include "WindowsWrapper.h"
 #include "Backends/Controller.h"

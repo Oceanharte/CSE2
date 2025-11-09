@@ -8,7 +8,11 @@
 #include <string.h>
 #include <string>
 
+#ifdef __PS2__
 #include <SDL2/SDL.h>
+#else
+#include "SDL.h"
+#endif
 
 #include "../../WindowsWrapper.h"
 
@@ -64,10 +68,13 @@ static void RectToSDLRect(const RenderBackend_Rect *rect, SDL_Rect *sdl_rect)
 
 RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t screen_width, size_t screen_height, bool fullscreen)
 {
+#ifdef __PS2__
 	SDL_SetHint(SDL_HINT_PS2_DYNAMIC_VSYNC, "1");
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 	SDL_SetHint(SDL_HINT_PS2_GS_WIDTH, "320");
 	SDL_SetHint(SDL_HINT_PS2_GS_HEIGHT, "224");
+#endif
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 	Backend_PrintInfo("Available SDL render drivers:");
 
@@ -294,14 +301,16 @@ void RenderBackend_Blit(RenderBackend_Surface *source_surface, const RenderBacke
 	SDL_Rect destination_rect = {(int)x, (int)y, source_rect.w, source_rect.h};
 
 	// Blit the texture
-	if (SDL_SetTextureBlendMode(source_surface->texture, SDL_BLENDMODE_BLEND /*colour_key ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE*/) < 0)
-		Backend_PrintError("Couldn't set texture blend mode: %s", SDL_GetError());
+	if (source_surface != &framebuffer) {
+		if (SDL_SetTextureBlendMode(source_surface->texture, SDL_BLENDMODE_BLEND /*colour_key ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE*/) < 0)
+			Backend_PrintError("Couldn't set texture blend mode: %s", SDL_GetError());
 
-	if (SDL_SetRenderTarget(renderer, destination_surface == &framebuffer ? NULL : destination_surface->texture) < 0)
-		Backend_PrintError("Couldn't set current rendering target: %s", SDL_GetError());
+		if (SDL_SetRenderTarget(renderer, destination_surface == &framebuffer ? NULL : destination_surface->texture) < 0)
+			Backend_PrintError("Couldn't set current rendering target: %s", SDL_GetError());
 
-	if (SDL_RenderCopy(renderer, source_surface->texture, &source_rect, &destination_rect) < 0)
-		Backend_PrintError("Couldn't copy part of texture to rendering target: %s", SDL_GetError());
+		if (SDL_RenderCopy(renderer, source_surface->texture, &source_rect, &destination_rect) < 0)
+			Backend_PrintError("Couldn't copy part of texture to rendering target: %s", SDL_GetError());
+	}
 }
 
 void RenderBackend_ColourFill(RenderBackend_Surface *surface, const RenderBackend_Rect *rect, unsigned char red, unsigned char green, unsigned char blue)

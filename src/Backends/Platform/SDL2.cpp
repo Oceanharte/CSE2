@@ -10,7 +10,11 @@
 #include <string.h>
 #include <string>
 
-#include <SDL2/SDL.h>
+#ifdef __PS2__
+	#include <SDL2/SDL.h>
+#else
+	#include "SDL.h"
+#endif
 
 #include "../Rendering.h"
 #include "../Shared/SDL.h"

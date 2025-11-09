@@ -7,7 +7,11 @@
 #include <string.h>
 #include <string>
 
+#ifdef __PS2__
 #include <SDL2/SDL.h>
+#else
+#include "SDL.h"
+#endif
 
 #include "../../Misc.h"
 
