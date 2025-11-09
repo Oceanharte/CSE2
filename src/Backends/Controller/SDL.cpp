@@ -149,11 +149,11 @@ bool ControllerBackend_GetJoystickStatus(bool **buttons, unsigned int *button_co
 
 	//0 - horizontal
 	//1 - vertical
-	axis_buffer[0] =
+	axis_buffer[0] |=
 		right ? 0x7fff
 		: left ? -0x7fff
 		: 0;
-	axis_buffer[1] =
+	axis_buffer[1] |=
 		down ? 0x7fff
 		: up ? -0x7fff
 		: 0;

@@ -189,6 +189,9 @@ void RenderBackend_ColourFill(RenderBackend_Surface *surface, const RenderBacken
 
 RenderBackend_GlyphAtlas* RenderBackend_CreateGlyphAtlas(size_t width, size_t height)
 {
+	if (width % 4 != 0) {
+		width += (4 - (width%4));
+	}
 	RenderBackend_GlyphAtlas *atlas = (RenderBackend_GlyphAtlas*)malloc(sizeof(RenderBackend_GlyphAtlas));
 
 	if (atlas != NULL)
