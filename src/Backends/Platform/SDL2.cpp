@@ -10,7 +10,7 @@
 #include <string.h>
 #include <string>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "../Rendering.h"
 #include "../Shared/SDL.h"

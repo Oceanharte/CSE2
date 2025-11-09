@@ -103,3 +103,4 @@
 
 # Exclude converted resource files
 /src/Resource
+game_english/CSE2.elf

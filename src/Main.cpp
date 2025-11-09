@@ -12,8 +12,7 @@
 #include <string.h>
 #include <string>
 
-#define SDL_MAIN_HANDLED
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "WindowsWrapper.h"
 #include "Backends/Controller.h"
@@ -114,8 +113,19 @@ void PutOverlay(void)
 	else {
 		PutText(8, 20, "<NO INPUT>", 0xFFFFFF);
 	}
-
 	//PutNumber4(8, 32, gbUseJoystick, FALSE);
+	int x = 2;
+
+	bool* buttons;
+	unsigned int buttonCount;
+	short* axes;
+	unsigned int axesCount;
+	/*if (ControllerBackend_GetJoystickStatus(&buttons, &buttonCount, &axes, &axesCount)) {
+		for (int i = 0; i < buttonCount; i++) {
+			PutNumber4(x, 32, buttons[i], FALSE);
+			x += 8;
+		}
+	}*/
 }
 
 void PutFramePerSecound(void)
@@ -231,16 +241,16 @@ int main(int argc, char *argv[])
 				gJoystickButtonTable[i] = gKeyArms;
 				break;
 
-			case 6:
-				gJoystickButtonTable[i] = gKeyArmsRev;
-				break;
-
 			case 4:
 				gJoystickButtonTable[i] = gKeyItem;
 				break;
 
 			case 5:
 				gJoystickButtonTable[i] = gKeyMap;
+				break;
+
+			case 6:
+				gJoystickButtonTable[i] = gKeyArmsRev;
 				break;
 		}
 	}

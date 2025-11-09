@@ -9,7 +9,7 @@
 #ifndef USE_OPENGLES2
 #include <glad/glad.h>
 #endif
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "../../../Misc.h"
 #include "../../../Shared/SDL.h"

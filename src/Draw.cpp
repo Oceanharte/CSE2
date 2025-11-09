@@ -445,7 +445,7 @@ void BackupSurface(SurfaceID surf_no, const RECT *rect)
 	if (rcSet.right <= rcSet.left || rcSet.bottom <= rcSet.top)
 		return;
 
-	//RenderBackend_Blit(framebuffer, &rcSet, surf[surf_no], rcSet.left, rcSet.top, FALSE);
+	RenderBackend_Blit(framebuffer, &rcSet, surf[surf_no], rcSet.left, rcSet.top, FALSE);
 }
 
 void PutBitmap3(const RECT *rcView, int x, int y, const RECT *rect, SurfaceID surf_no) // Transparency

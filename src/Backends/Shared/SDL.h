@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 extern SDL_Window *window;

@@ -6,7 +6,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "../Misc.h"
 #include "../Shared/SDL.h"
@@ -25,10 +25,10 @@ bool ControllerBackend_Init(void)
 		return false;
 	}
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+//#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	if (SDL_NumJoysticks() > 0)
 		ControllerBackend_JoystickConnect(0);
-#endif
+//#endif
 
 	return true;
 }
@@ -120,16 +120,35 @@ bool ControllerBackend_GetJoystickStatus(bool **buttons, unsigned int *button_co
 		button_buffer[current_button++] = hat == SDL_HAT_LEFT || hat == SDL_HAT_LEFTUP || hat == SDL_HAT_LEFTDOWN;
 	}
 
+	//swap 1 and 14
+	button_buffer[1] = button_buffer[14];	//X to jump
+	button_buffer[2] = button_buffer[15];	//square to fire
+	button_buffer[3] = button_buffer[11];	//R1 to armsfwd
+	button_buffer[6] = button_buffer[10];	//L1 to armsrev
+	button_buffer[5] = button_buffer[0];	//select to map
+	button_buffer[4] = button_buffer[4];	//start to items
+
 	*buttons = button_buffer;
 
 	////////////////////////
 	// Handle axis inputs //
 	////////////////////////
-
 	for (int i = 0; i < total_sdl_axes; ++i)
 		axis_buffer[i] = SDL_JoystickGetAxis(joystick, i);
 
 	*axes = axis_buffer;
+
+	//0 - horizontal
+	//1 - vertical
+	Uint8 hat0 = SDL_JoystickGetHat(joystick, 0);
+	axis_buffer[0] =
+		hat0 & SDL_HAT_RIGHT ? 0x7fff
+		: hat0 & SDL_HAT_LEFT ? -0x7fff
+		: 0;
+	axis_buffer[1] =
+		hat0 & SDL_HAT_UP ? 0x7fff
+		: hat0 & SDL_HAT_DOWN ? -0x7fff
+		: 0;
 
 	return true;
 }

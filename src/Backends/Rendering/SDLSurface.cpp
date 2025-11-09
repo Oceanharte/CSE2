@@ -8,7 +8,7 @@
 #include <string.h>
 #include <string>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "../Misc.h"
 #include "../Shared/SDL.h"
@@ -48,6 +48,8 @@ static void RectToSDLRect(const RenderBackend_Rect *rect, SDL_Rect *sdl_rect)
 
 RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t screen_width, size_t screen_height, bool fullscreen)
 {
+	SDL_SetHint(SDL_HINT_PS2_DYNAMIC_VSYNC, "0");
+
 	window = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, 0);
 
 	if (window != NULL)

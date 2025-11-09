@@ -28,7 +28,7 @@ set(BACKEND_RENDERER "SDLTexture" CACHE STRING "Which renderer the game should u
 set(BACKEND_AUDIO "SDL2" CACHE STRING "Which audio backend the game should use: 'SDL2', 'SDL1', 'miniaudio', 'WiiU-Hardware', 'WiiU-Software', '3DS-Hardware', '3DS-Software', or 'Null'")
 set(BACKEND_PLATFORM "SDL2" CACHE STRING "Which platform backend the game should use: 'SDL2', 'SDL1', 'GLFW3', 'WiiU', '3DS', or 'Null'")
 
-option(LTO "Enable link-time optimisation" OFF)
+option(LTO "Enable link-time optimisation" ON)
 option(PKG_CONFIG_STATIC_LIBS "On platforms with pkg-config, static-link the dependencies (good for Windows builds, so you don't need to bundle DLL files)" OFF)
 option(MSVC_LINK_STATIC_RUNTIME "Link the static MSVC runtime library (Visual Studio only)" OFF)
 
@@ -520,6 +520,9 @@ set_target_properties(CSE2 PROPERTIES
 )
 
 
+target_compile_options(CSE2 PRIVATE "-Ofast")
+target_compile_options(CSE2 PRIVATE "-flto")
+
 ################
 # Dependencies #
 ################
@@ -579,18 +582,19 @@ if(BACKEND_PLATFORM MATCHES "SDL2" OR BACKEND_AUDIO MATCHES "SDL2")
 			message(STATUS "Using system SDL2 (pkg-config, static)")
 			# Do not link libSDL2main.a, otherwise we get weird linker errors about SDL_main not being found.
 			# We don't need SDL2's WinMain->main shim anyway, so we can just ignore it.
-			list(REMOVE_ITEM sdl2_STATIC_CFLAGS "-Dmain=SDL_main")
-			list(REMOVE_ITEM sdl2_STATIC_LDFLAGS "-lSDL2main")
+			#list(REMOVE_ITEM sdl2_STATIC_CFLAGS "-Dmain=SDL_main")
+			#list(REMOVE_ITEM sdl2_STATIC_LDFLAGS "-lSDL2main")
 			target_compile_options(CSE2 PRIVATE ${sdl2_STATIC_CFLAGS})
 			target_link_libraries(CSE2 PRIVATE ${sdl2_STATIC_LDFLAGS})
 		else()
 			message(STATUS "Using system SDL2 (pkg-config, dynamic)")
 			# Do not link libSDL2main.a, otherwise we get weird linker errors about SDL_main not being found.
 			# We don't need SDL2's WinMain->main shim anyway, so we can just ignore it.
-			list(REMOVE_ITEM sdl2_CFLAGS "-Dmain=SDL_main")
-			list(REMOVE_ITEM sdl2_LDFLAGS "-lSDL2main")
+			#list(REMOVE_ITEM sdl2_CFLAGS "-Dmain=SDL_main")
+			#list(REMOVE_ITEM sdl2_LDFLAGS "-lSDL2main")
 			target_compile_options(CSE2 PRIVATE ${sdl2_CFLAGS})
 			target_link_libraries(CSE2 PRIVATE ${sdl2_LDFLAGS})
+			target_link_libraries(CSE2 PRIVATE SDL2main)
 		endif()
 	elseif(TARGET SDL2::SDL2)
 		# CMake-generated config (Arch, vcpkg, Raspbian)

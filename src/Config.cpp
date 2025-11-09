@@ -42,13 +42,19 @@ BOOL LoadConfigData(CONFIGDATA *conf)
 	conf->ok_button_mode = File_ReadLE32(fp);
 
 	// Read display mode (320x240, 640x480, 24-bit fullscreen, 32-bit fullscreen) TODO: add more things?
-	conf->display_mode = File_ReadLE32(fp);
+	conf->display_mode = 1;//File_ReadLE32(fp);
 
 	// Read joystick configuration (if enabled, and mappings)
 	conf->bJoystick = TRUE;
 	//conf->bJoystick = File_ReadLE32(fp);
-	for (int button = 0; button < 8; button++)
-		conf->joystick_button[button] = File_ReadLE32(fp);
+	conf->joystick_button[0] = 0;
+	conf->joystick_button[1] = 1;
+	conf->joystick_button[2] = 2;
+	conf->joystick_button[3] = 3;
+	conf->joystick_button[4] = 4;
+	conf->joystick_button[5] = 5;
+	conf->joystick_button[6] = 6;
+	conf->joystick_button[7] = 7;
 
 	// Close file
 	fclose(fp);
@@ -77,14 +83,16 @@ void DefaultConfigData(CONFIGDATA *conf)
 	conf->display_mode = 2;
 #endif
 
+	conf->display_mode = 1;
+
 	// Reset joystick settings (as these can't simply be set to 0)
 	conf->bJoystick = TRUE;
-	conf->joystick_button[0] = 2;
+	conf->joystick_button[0] = 0;
 	conf->joystick_button[1] = 1;
-	conf->joystick_button[2] = 5;
-	conf->joystick_button[3] = 6;
-	conf->joystick_button[4] = 3;
-	conf->joystick_button[5] = 4;
+	conf->joystick_button[2] = 2;
+	conf->joystick_button[3] = 3;
+	conf->joystick_button[4] = 4;
+	conf->joystick_button[5] = 5;
 	conf->joystick_button[6] = 6;
-	conf->joystick_button[7] = 3;
+	conf->joystick_button[7] = 7;
 }

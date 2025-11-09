@@ -9,7 +9,6 @@
 
 #include <stddef.h>
 #include <string>
-#include "SDL.h"
 
 #include "WindowsWrapper.h"
 

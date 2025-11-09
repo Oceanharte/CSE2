@@ -8,7 +8,7 @@
 #include <string.h>
 #include <string>
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 #include "../../WindowsWrapper.h"
 
@@ -64,6 +64,11 @@ static void RectToSDLRect(const RenderBackend_Rect *rect, SDL_Rect *sdl_rect)
 
 RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t screen_width, size_t screen_height, bool fullscreen)
 {
+	SDL_SetHint(SDL_HINT_PS2_DYNAMIC_VSYNC, "1");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+	SDL_SetHint(SDL_HINT_PS2_GS_WIDTH, "320");
+	SDL_SetHint(SDL_HINT_PS2_GS_HEIGHT, "224");
+
 	Backend_PrintInfo("Available SDL render drivers:");
 
 	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
@@ -87,10 +92,11 @@ RenderBackend_Surface* RenderBackend_Init(const char *window_title, size_t scree
 		SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");	// We never interfere with the renderer, so don't let SDL implicitly disable batching
 	#endif
 
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
 		if (renderer != NULL)
 		{
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RendererInfo info;
 			if (SDL_GetRendererInfo(renderer, &info) < 0)
 				Backend_PrintError("Couldn't get selected render driver information: %s", SDL_GetError());
@@ -188,6 +194,8 @@ RenderBackend_Surface* RenderBackend_CreateSurface(size_t width, size_t height, 
 
 	surface->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, render_target ? SDL_TEXTUREACCESS_TARGET : SDL_TEXTUREACCESS_STATIC, width, height);
 
+	SDL_SetTextureBlendMode(surface->texture, SDL_BLENDMODE_BLEND);
+
 	if (surface->texture == NULL)
 	{
 		free(surface);
@@ -253,9 +261,13 @@ void RenderBackend_UploadSurface(RenderBackend_Surface *surface, const unsigned 
 	{
 		for (size_t x = 0; x < width; ++x)
 		{
-			*buffer_pointer++ = src_pixel[0];
-			*buffer_pointer++ = src_pixel[1];
-			*buffer_pointer++ = src_pixel[2];
+			unsigned char srcR = src_pixel[0];
+			unsigned char srcG = src_pixel[1];
+			unsigned char srcB = src_pixel[2];
+
+			*buffer_pointer++ = srcR;
+			*buffer_pointer++ = srcG;
+			*buffer_pointer++ = srcB;
 
 			if (src_pixel[0] == 0 && src_pixel[1] == 0 && src_pixel[2] == 0)	// Assumes the colour key will always be #000000 (black)
 				*buffer_pointer++ = 0;
@@ -282,7 +294,7 @@ void RenderBackend_Blit(RenderBackend_Surface *source_surface, const RenderBacke
 	SDL_Rect destination_rect = {(int)x, (int)y, source_rect.w, source_rect.h};
 
 	// Blit the texture
-	if (SDL_SetTextureBlendMode(source_surface->texture, colour_key ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE) < 0)
+	if (SDL_SetTextureBlendMode(source_surface->texture, SDL_BLENDMODE_BLEND /*colour_key ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE*/) < 0)
 		Backend_PrintError("Couldn't set texture blend mode: %s", SDL_GetError());
 
 	if (SDL_SetRenderTarget(renderer, destination_surface == &framebuffer ? NULL : destination_surface->texture) < 0)
