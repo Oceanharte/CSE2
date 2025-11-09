@@ -8,6 +8,7 @@
 #include "MapName.h"
 
 #include <string.h>
+#include <string>
 
 #include "CommonDefines.h"
 #include "Draw.h"
@@ -16,6 +17,8 @@
 MAP_NAME gMapName;
 
 static RECT rc = { 0, 0, 160, 12 };
+
+std::string currentMapName = "";
 
 void ReadyMapName(const char *str)
 {
@@ -90,10 +93,18 @@ void ReadyMapName(const char *str)
 	strcpy(gMapName.name, str);
 
 	// Draw the text to the surface
-	a = (int)strlen(gMapName.name);
+	currentMapName = gMapName.name;
+	/*a = (int)strlen(gMapName.name);
 	CortBox2(&rc, 0, SURFACE_ID_ROOM_NAME);
 	PutText2(((160 - (a * 6)) / 2) + 6, 1, gMapName.name, RGB(0x11, 0x00, 0x22), SURFACE_ID_ROOM_NAME);
-	PutText2(((160 - (a * 6)) / 2) + 6, 0, gMapName.name, RGB(0xFF, 0xFF, 0xFE), SURFACE_ID_ROOM_NAME);
+	PutText2(((160 - (a * 6)) / 2) + 6, 0, gMapName.name, RGB(0xFF, 0xFF, 0xFE), SURFACE_ID_ROOM_NAME);*/
+}
+
+void renderRoomName(int xp, int yp)
+{
+	int a = currentMapName.size();
+	PutText(xp + ((160 - (a * 6)) / 2) + 6, yp + 1, currentMapName.c_str(), RGB(0x11, 0x00, 0x22));
+	PutText(xp + ((160 - (a * 6)) / 2) + 6, yp + 0, currentMapName.c_str(), RGB(0xFF, 0xFF, 0xFE));
 }
 
 void PutMapName(BOOL bMini)
@@ -110,13 +121,22 @@ void PutMapName(BOOL bMini)
 		rcBack.top = 7;
 		rcBack.bottom = 24;
 
-		CortBox(&rcBack, 0x000000);
-		PutBitmap3(&grcGame, (WINDOW_WIDTH / 2) - 86, 10, &rc, SURFACE_ID_ROOM_NAME);
+		//CortBox(&rcBack, 0x000000);
+		//PutBitmap3(&grcGame, (WINDOW_WIDTH / 2) - 86, 10, &rc, SURFACE_ID_ROOM_NAME);
+
+		int xp = (WINDOW_WIDTH / 2) - 86;
+		int yp = 10;
+		// MNA
+		renderRoomName(xp, yp);
 	}
 	else if (gMapName.flag)
 	{
+		int xp = (WINDOW_WIDTH / 2) - 86;
+		int yp = (WINDOW_HEIGHT / 2) - 40;
 		// MNA
-		PutBitmap3(&grcGame, (WINDOW_WIDTH / 2) - 86, (WINDOW_HEIGHT / 2) - 40, &rc, SURFACE_ID_ROOM_NAME);
+		renderRoomName(xp, yp);
+
+		//PutBitmap3(&grcGame, (WINDOW_WIDTH / 2) - 86, (WINDOW_HEIGHT / 2) - 40, &rc, SURFACE_ID_ROOM_NAME);
 		if (++gMapName.wait > 160)
 			gMapName.flag = FALSE;
 	}
@@ -130,9 +150,11 @@ void StartMapName(void)
 
 void RestoreMapName(void)
 {
-	int a = (int)strlen(gMapName.name);
+	currentMapName = gMapName.name;
+
+	/*int a = (int)strlen(gMapName.name);
 
 	CortBox2(&rc, 0, SURFACE_ID_ROOM_NAME);
 	PutText2(((160 - (a * 6)) / 2) + 6, 1, gMapName.name, RGB(0x11, 0x00, 0x22), SURFACE_ID_ROOM_NAME);
-	PutText2(((160 - (a * 6)) / 2) + 6, 0, gMapName.name, RGB(0xFF, 0xFF, 0xFE), SURFACE_ID_ROOM_NAME);
+	PutText2(((160 - (a * 6)) / 2) + 6, 0, gMapName.name, RGB(0xFF, 0xFF, 0xFE), SURFACE_ID_ROOM_NAME);*/
 }

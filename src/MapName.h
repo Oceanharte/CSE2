@@ -19,6 +19,7 @@ typedef struct MAP_NAME
 extern MAP_NAME gMapName;
 
 void ReadyMapName(const char *str);
+void renderRoomName(int xp, int yp);
 void PutMapName(BOOL bMini);
 void StartMapName(void);
 void RestoreMapName(void);
