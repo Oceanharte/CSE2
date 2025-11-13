@@ -6,7 +6,7 @@
 // See LICENCE.txt for details.
 
 #pragma once
-
+#include <vector>
 #include "WindowsWrapper.h"
 
 typedef enum MusicID
@@ -52,7 +52,9 @@ typedef enum MusicID
 	MUS_LIVING_WATERWAY = 0x26,
 	MUS_SEAL_CHAMBER = 0x27,
 	MUS_TOROKOS_THEME = 0x28,
-	MUS_WHITE = 0x29
+	MUS_WHITE = 0x29,
+	MUS_OMI = 0x2A,
+	MUS_OTHER = 0x2B
 } MusicID;
 
 typedef struct STAGE_TABLE
@@ -74,7 +76,7 @@ extern MusicID gOldNo;
 
 extern const STAGE_TABLE gTMT[95];
 
-extern const char* const gMusicTable[42];
+extern std::vector<const char*> gMusicTable;
 
 BOOL TransferStage(int no, int w, int x, int y);
 void ChangeMusic(MusicID no);

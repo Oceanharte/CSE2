@@ -5,6 +5,8 @@
 // Modifications and custom code are under the MIT licence.
 // See LICENCE.txt for details.
 
+#include <vector>
+
 #include "Stage.h"
 
 #include <string>
@@ -210,7 +212,7 @@ BOOL TransferStage(int no, int w, int x, int y)
 }
 
 // Music
-const char* const gMusicTable[] = {
+std::vector<const char*> gMusicTable = {
 	"XXXX",
 	"WANPAKU",
 	"ANZEN",
@@ -252,7 +254,9 @@ const char* const gMusicTable[] = {
 	"MARINE",
 	"BALLOS",
 	"TOROKO",
-	"WHITE"
+	"WHITE",
+	"OMI",
+	"OTHER"
 };
 
 void ChangeMusic(MusicID no)
